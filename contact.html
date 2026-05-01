@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact — Ponjanani M</title>
+  <meta name="description" content="Get in touch with Ponjanani M — Java Full-Stack Developer based in Chennai, India." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── CSS Variables ── */
+    :root {
+      --bg: #f5f5f5; --bg-2: #ececec; --surface: #ffffff; --surface-hover: #fafafa;
+      --border: rgba(0,0,0,0.08); --text: #111111; --text-muted: #6b6b6b;
+      --text-faint: #999999; --accent: #111111; --accent-fg: #ffffff;
+      --green: #22c55e; --green-bg: rgba(34,197,94,0.12);
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-md: 0 4px 16px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.04);
+      --shadow-lg: 0 12px 40px rgba(0,0,0,0.12), 0 4px 12px rgba(0,0,0,0.06);
+      --shadow-xl: 0 24px 64px rgba(0,0,0,0.14);
+      --radius-sm: 10px; --radius-md: 16px; --radius-lg: 24px; --radius-pill: 999px;
+      --nav-blur: blur(20px); --nav-bg: rgba(255,255,255,0.75);
+      --transition: 0.25s cubic-bezier(0.4,0,0.2,1);
+    }
+    [data-theme="dark"] {
+      --bg: #0f0f0f; --bg-2: #1a1a1a; --surface: #1e1e1e; --surface-hover: #252525;
+      --border: rgba(255,255,255,0.08); --text: #f0f0f0; --text-muted: #999999;
+      --text-faint: #555555; --accent: #f0f0f0; --accent-fg: #0f0f0f;
+      --green: #4ade80; --green-bg: rgba(74,222,128,0.1);
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.3); --shadow-md: 0 4px 16px rgba(0,0,0,0.4);
+      --shadow-lg: 0 12px 40px rgba(0,0,0,0.5); --shadow-xl: 0 24px 64px rgba(0,0,0,0.6);
+      --nav-bg: rgba(15,15,15,0.8);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text);
+      line-height: 1.6; overflow-x: hidden; transition: background var(--transition), color var(--transition); }
+    img { display: block; max-width: 100%; }
+    a { text-decoration: none; color: inherit; }
+    button { font-family: inherit; cursor: pointer; border: none; background: none; }
+    input, textarea { font-family: inherit; }
+    h1, h2, h3 { font-family: 'Fraunces', serif; font-weight: 700; line-height: 1.15; letter-spacing: -0.02em; }
+    h1 { font-size: clamp(2.4rem, 5vw, 4rem); }
+    h2 { font-size: clamp(1.8rem, 3.5vw, 2.8rem); }
+    h3 { font-size: 1.15rem; font-weight: 600; }
+    p { color: var(--text-muted); font-weight: 300; font-size: 1.05rem; }
+    .container { width: 100%; max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+    section { padding: 100px 0; }
+    .reveal { opacity: 0; transform: translateY(32px);
+      transition: opacity 0.7s cubic-bezier(0.4,0,0.2,1), transform 0.7s cubic-bezier(0.4,0,0.2,1); }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: 0.1s; } .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; } .reveal-delay-4 { transition-delay: 0.4s; }
+    /* Navbar */
+    #navbar { position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+      z-index: 1000; width: calc(100% - 48px); max-width: 800px; }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between;
+      background: var(--nav-bg); backdrop-filter: var(--nav-blur); -webkit-backdrop-filter: var(--nav-blur);
+      border: 1px solid var(--border); border-radius: var(--radius-pill);
+      padding: 10px 10px 10px 22px; box-shadow: var(--shadow-md);
+      transition: background var(--transition), box-shadow var(--transition); }
+    .nav-inner.scrolled { box-shadow: var(--shadow-lg); }
+    .nav-logo { font-family: 'Fraunces', serif; font-size: 1.3rem; font-weight: 700;
+      color: var(--text); letter-spacing: -0.03em; }
+    .nav-links { display: flex; align-items: center; gap: 4px; list-style: none; }
+    .nav-links a { display: block; padding: 8px 16px; border-radius: var(--radius-pill);
+      font-size: 0.88rem; font-weight: 500; color: var(--text-muted);
+      transition: color var(--transition), background var(--transition); }
+    .nav-links a:hover { color: var(--text); background: var(--bg-2); }
+    .nav-links a.active { color: var(--text); background: var(--bg-2); }
+    .nav-right { display: flex; align-items: center; gap: 8px; }
+    .theme-toggle { width: 38px; height: 38px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--bg-2); border: 1px solid var(--border); color: var(--text-muted);
+      transition: all var(--transition); flex-shrink: 0; }
+    .theme-toggle:hover { color: var(--text); background: var(--bg); }
+    .hamburger { display: none; width: 38px; height: 38px; border-radius: 50%;
+      flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+      background: var(--bg-2); border: 1px solid var(--border); flex-shrink: 0; }
+    .hamburger span { display: block; width: 16px; height: 1.5px; background: var(--text);
+      border-radius: 2px; transition: all var(--transition); }
+    .hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+    .mobile-menu { display: none; position: fixed; inset: 0; z-index: 999; background: var(--bg);
+      flex-direction: column; align-items: center; justify-content: center; gap: 8px; }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a { font-family: 'Fraunces', serif; font-size: 2rem; font-weight: 700;
+      color: var(--text); padding: 12px 32px; border-radius: var(--radius-pill);
+      transition: background var(--transition); }
+    .mobile-menu a:hover { background: var(--bg-2); }
+    /* Blobs */
+    .blob { position: fixed; border-radius: 50%; filter: blur(80px);
+      pointer-events: none; z-index: -1; opacity: 0.35; }
+    [data-theme="light"] .blob-1 { width:400px;height:400px;background:#d4f0e4;top:-100px;right:-100px; }
+    [data-theme="light"] .blob-2 { width:300px;height:300px;background:#e8e4f5;bottom:100px;left:-80px; }
+    [data-theme="dark"]  .blob-1 { width:400px;height:400px;background:#0d2d1e;top:-100px;right:-100px; }
+    [data-theme="dark"]  .blob-2 { width:300px;height:300px;background:#1a1528;bottom:100px;left:-80px; }
+    /* Buttons */
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 14px 28px;
+      border-radius: var(--radius-pill); font-size: 0.92rem; font-weight: 500;
+      transition: all var(--transition); letter-spacing: 0.01em; }
+    .btn-primary { background: var(--accent); color: var(--accent-fg); box-shadow: var(--shadow-sm); }
+    .btn-primary:hover { transform: scale(1.04); box-shadow: var(--shadow-md); }
+    .btn-outline { background: transparent; color: var(--text); border: 1.5px solid var(--border); }
+    .btn-outline:hover { background: var(--surface); transform: scale(1.04); box-shadow: var(--shadow-sm); }
+    /* Section label */
+    .section-label { display: inline-block; font-size: 0.78rem; font-weight: 600;
+      letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 14px; }
+    .section-header { text-align: center; margin-bottom: 64px; }
+    .section-title { color: var(--text); }
+    .section-sub { margin-top: 14px; max-width: 520px; margin-left: auto; margin-right: auto; }
+    /* Chip / tag */
+    .chip { font-size: 0.8rem; font-weight: 500; padding: 5px 13px; border-radius: var(--radius-pill);
+      background: var(--bg-2); border: 1px solid var(--border); color: var(--text-muted); }
+    .tag { font-size: 0.75rem; font-weight: 500; padding: 4px 11px;
+      border-radius: var(--radius-pill); background: var(--bg);
+      border: 1px solid var(--border); color: var(--text-faint); }
+    /* Page hero (inner pages) */
+    .page-hero { padding: 150px 24px 72px; text-align: center; position: relative; overflow: hidden; }
+    .page-hero-orb { position: absolute; border-radius: 50%; pointer-events: none;
+      filter: blur(100px); opacity: 0.22; width: 500px; height: 500px;
+      background: radial-gradient(circle, #d4f0e4, transparent 70%);
+      top: -160px; left: 50%; transform: translateX(-50%); }
+    [data-theme="dark"] .page-hero-orb { background: radial-gradient(circle, #0d2d1e, transparent 70%); opacity: 0.35; }
+    .page-hero-label { display: inline-block; font-size: 0.78rem; font-weight: 600;
+      letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 16px; }
+    .page-hero h1 { animation: fadeSlideIn 0.85s 0.05s cubic-bezier(0.4,0,0.2,1) both; margin-bottom: 18px; }
+    .page-hero h1 em { font-style: italic; color: var(--text-muted); }
+    .page-hero-sub { font-size: 1.05rem; max-width: 500px; margin: 0 auto;
+      animation: fadeSlideIn 0.85s 0.15s cubic-bezier(0.4,0,0.2,1) both; }
+    @keyframes fadeSlideIn { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:translateY(0)} }
+    /* Footer */
+    footer { border-top: 1px solid var(--border); padding: 32px 0; text-align: center; }
+    footer p { font-size: 0.85rem; color: var(--text-faint); }
+    footer a { color: var(--text-muted); transition: color var(--transition); }
+    footer a:hover { color: var(--text); }
+    /* Responsive */
+    @media (max-width: 768px) {
+      section { padding: 72px 0; }
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      h1 { font-size: 2.2rem; } h2 { font-size: 1.8rem; }
+    }
+    @media (max-width: 480px) {
+      #navbar { width: calc(100% - 32px); top: 16px; }
+    }
+    /* Contact layout */
+    .contact-layout { display: grid; grid-template-columns: 380px 1fr; gap: 64px; align-items: start; }
+    /* Info panel */
+    .contact-info { display: flex; flex-direction: column; gap: 20px; position: sticky; top: 100px; }
+    .info-card { background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); padding: 28px; box-shadow: var(--shadow-sm); }
+    .info-card-title { font-size: 0.74rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.1em; color: var(--text-faint); margin-bottom: 18px; }
+    .contact-item { display: flex; align-items: center; gap: 14px; padding: 12px 0;
+      border-bottom: 1px solid var(--border); }
+    .contact-item:last-child { border-bottom: none; }
+    .ci-icon { width: 36px; height: 36px; border-radius: var(--radius-sm); flex-shrink: 0;
+      background: var(--bg-2); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center; color: var(--text-muted); }
+    .ci-label { font-size: 0.72rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.08em; color: var(--text-faint); margin-bottom: 2px; }
+    .ci-val { font-size: 0.88rem; color: var(--text); font-weight: 500; }
+    .ci-val a { transition: color var(--transition); }
+    .ci-val a:hover { color: var(--text-muted); }
+    /* Availability badge */
+    .avail-badge { display: flex; align-items: center; gap: 12px; padding: 16px 20px;
+      background: var(--green-bg); border: 1px solid rgba(34,197,94,0.2);
+      border-radius: var(--radius-md); }
+    [data-theme="dark"] .avail-badge { border-color: rgba(74,222,128,0.2); }
+    .avail-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green);
+      flex-shrink: 0; animation: pulse 2s ease-in-out infinite; }
+    @keyframes pulse{ 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.8)} }
+    .avail-text { font-size: 0.86rem; font-weight: 600; color: var(--green); }
+    .avail-sub { font-size: 0.76rem; color: var(--text-faint); margin-top: 2px; }
+    /* Social grid */
+    .social-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .social-card { display: flex; align-items: center; gap: 10px; padding: 12px 14px;
+      background: var(--bg-2); border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+      color: var(--text-muted); font-size: 0.84rem; font-weight: 500;
+      transition: all var(--transition); }
+    .social-card:hover { color: var(--text); border-color: var(--text-faint); background: var(--bg); transform: translateY(-2px); }
+    /* Form */
+    .form-wrap { background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); padding: 40px; box-shadow: var(--shadow-sm); }
+    .form-wrap h2 { margin-bottom: 8px; }
+    .form-wrap > p { font-size: 0.96rem; margin-bottom: 32px; }
+    .subject-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 28px; }
+    .subj-btn { padding: 7px 16px; border-radius: var(--radius-pill); font-size: 0.81rem;
+      font-weight: 500; background: var(--bg-2); border: 1.5px solid var(--border);
+      color: var(--text-muted); cursor: pointer; transition: all var(--transition); }
+    .subj-btn:hover { border-color: var(--text-faint); color: var(--text); }
+    .subj-btn.selected { background: var(--accent); color: var(--accent-fg); border-color: var(--accent); }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-full { grid-column: span 2; }
+    .form-group { display: flex; flex-direction: column; gap: 7px; }
+    .form-label { font-size: 0.8rem; font-weight: 500; color: var(--text-muted); }
+    .form-input { width: 100%; padding: 13px 16px; border-radius: var(--radius-sm);
+      border: 1.5px solid var(--border); background: var(--bg-2); color: var(--text);
+      font-size: 0.94rem; font-family: inherit; outline: none;
+      transition: border-color var(--transition), box-shadow var(--transition); }
+    .form-input:focus { border-color: var(--text-muted); box-shadow: 0 0 0 3px rgba(0,0,0,0.06); }
+    [data-theme="dark"] .form-input:focus { box-shadow: 0 0 0 3px rgba(255,255,255,0.06); }
+    textarea.form-input { resize: vertical; min-height: 130px; line-height: 1.6; }
+    .form-footer { display: flex; align-items: center; gap: 16px; margin-top: 8px; flex-wrap: wrap; }
+    .form-note { font-size: 0.78rem; color: var(--text-faint); }
+    .form-success { display: none; align-items: center; gap: 10px; color: var(--green);
+      font-size: 0.9rem; font-weight: 500; padding: 14px 18px; background: var(--green-bg);
+      border-radius: var(--radius-sm); border: 1px solid rgba(34,197,94,0.2); width: 100%; margin-top: 8px; }
+    .form-success.show { display: flex; }
+    @media(max-width:900px){ .contact-layout{grid-template-columns:1fr}.contact-info{position:static} }
+    @media(max-width:580px){ .form-grid{grid-template-columns:1fr}.form-full{grid-column:span 1}.form-wrap{padding:24px}.social-grid{grid-template-columns:1fr} }
+  </style>
+</head>
+<body>
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <nav class="mobile-menu" id="mobileMenu">
+    <a href="index.html" onclick="closeMobile()">Home</a>
+    <a href="about.html" onclick="closeMobile()">About</a>
+    <a href="projects.html" onclick="closeMobile()">Projects</a>
+    <a href="contact.html" onclick="closeMobile()">Contact</a>
+  </nav>
+  <nav id="navbar">
+    <div class="nav-inner" id="navInner">
+      <a href="index.html" class="nav-logo"></a>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="projects.html">Projects</a></li>
+        <li><a href="contact.html" class="active">Contact</a></li>
+      </ul>
+      <div class="nav-right">
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+          <svg id="sunIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/></svg>
+          <svg id="moonIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <button class="hamburger" id="hamburger" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page-hero">
+    <div class="page-hero-orb"></div>
+    <div class="page-hero-label">Get in Touch</div>
+    <h1>Let's start a<br /><em>conversation.</em></h1>
+    <p class="page-hero-sub">Open to full-time roles, freelance projects, and interesting collaborations. I respond within 24 hours.</p>
+  </div>
+
+  <section style="padding-top:0">
+    <div class="container">
+      <div class="contact-layout">
+
+        <div class="contact-info">
+          <div class="avail-badge reveal">
+            <div class="avail-dot"></div>
+            <div>
+              <div class="avail-text">Available for opportunities</div>
+              <div class="avail-sub">Open to full-time &amp; freelance</div>
+            </div>
+          </div>
+
+          <div class="info-card reveal reveal-delay-1">
+            <div class="info-card-title">Direct Contact</div>
+            <div class="contact-item">
+              <div class="ci-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+              <div><div class="ci-label">Email</div><div class="ci-val"><a href="mailto:ponjanani345@gmail.com">ponjanani345@gmail.com</a></div></div>
+            </div>
+            <div class="contact-item">
+              <div class="ci-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.48 2 2 0 0 1 3.58 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.96a16 16 0 0 0 6.19 6.19l1.06-1.06a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
+              <div><div class="ci-label">Phone</div><div class="ci-val"><a href="tel:+917550206352">+91 75502 06352</a></div></div>
+            </div>
+            <div class="contact-item">
+              <div class="ci-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+              <div><div class="ci-label">Location</div><div class="ci-val">Chennai, Tamil Nadu, India</div></div>
+            </div>
+            <div class="contact-item">
+              <div class="ci-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+              <div><div class="ci-label">Response</div><div class="ci-val">Within 24 hours</div></div>
+            </div>
+          </div>
+
+          <div class="info-card reveal reveal-delay-2">
+            <div class="info-card-title">Find Me On</div>
+            <div class="social-grid">
+              <a href="https://github.com/Janani-Works" target="_blank" rel="noopener" class="social-card">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+                GitHub
+              </a>
+              <a href="https://linkedin.com/in/pon-janani-fullstackdev" target="_blank" rel="noopener" class="social-card">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+                LinkedIn
+              </a>
+              <a href="mailto:ponjanani345@gmail.com" class="social-card" style="grid-column:span 2">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                ponjanani345@gmail.com
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-wrap reveal">
+          <h2>Send a message.</h2>
+          <p>Have a project idea, job opportunity, or just want to connect?</p>
+          <div class="subject-row">
+            <button type="button" class="subj-btn" onclick="selectSubj(this)">Job Opportunity</button>
+            <button type="button" class="subj-btn" onclick="selectSubj(this)">Freelance Project</button>
+            <button type="button" class="subj-btn" onclick="selectSubj(this)">Collaboration</button>
+            <button type="button" class="subj-btn" onclick="selectSubj(this)">Just saying hi 👋</button>
+          </div>
+          <form id="contactForm" novalidate>
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label" for="firstName">First Name *</label>
+                <input class="form-input" id="firstName" type="text" placeholder="Arjun" required />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="lastName">Last Name</label>
+                <input class="form-input" id="lastName" type="text" placeholder="Kumar" />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="email">Email Address *</label>
+                <input class="form-input" id="email" type="email" placeholder="arjun@company.com" required />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="company">Company</label>
+                <input class="form-input" id="company" type="text" placeholder="Optional" />
+              </div>
+              <div class="form-group form-full">
+                <label class="form-label" for="message">Message *</label>
+                <textarea class="form-input" id="message" placeholder="Tell me about your project or what you'd like to discuss..." required></textarea>
+              </div>
+            </div>
+            <div class="form-success" id="formSuccess">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              Message sent! I'll get back to you within 24 hours.
+            </div>
+            <div class="form-footer">
+              <button type="submit" class="btn btn-primary" id="submitBtn">
+                Send Message
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              </button>
+              <span class="form-note">I'll respond within 24 hours.</span>
+            </div>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <p>Designed &amp; built by <a href="index.html">Ponjanani M</a> &middot; <span id="year"></span> &middot; Chennai, Tamil Nadu ✦</p>
+    </div>
+  </footer>
+  <script>
+    // Year
+    document.getElementById('year').textContent = new Date().getFullYear();
+    // Theme
+    const html=document.documentElement,toggle=document.getElementById('themeToggle'),
+      sunIcon=document.getElementById('sunIcon'),moonIcon=document.getElementById('moonIcon');
+    const saved=localStorage.getItem('theme'); if(saved) html.setAttribute('data-theme',saved);
+    function syncIcons(){const d=html.getAttribute('data-theme')==='dark';
+      sunIcon.style.display=d?'none':'';moonIcon.style.display=d?'':'none';}
+    syncIcons();
+    toggle.addEventListener('click',()=>{
+      const next=html.getAttribute('data-theme')==='dark'?'light':'dark';
+      html.setAttribute('data-theme',next);localStorage.setItem('theme',next);syncIcons();});
+    // Hamburger
+    const ham=document.getElementById('hamburger'),mob=document.getElementById('mobileMenu');
+    ham.addEventListener('click',()=>{ham.classList.toggle('open');mob.classList.toggle('open');
+      document.body.style.overflow=mob.classList.contains('open')?'hidden':'';});
+    function closeMobile(){ham.classList.remove('open');mob.classList.remove('open');document.body.style.overflow='';}
+    // Scroll
+    const navInner=document.getElementById('navInner');
+    window.addEventListener('scroll',()=>{navInner.classList.toggle('scrolled',window.scrollY>40);},{passive:true});
+    // Reveal
+    const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{
+      if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12});
+    document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+  </script>
+  <script>
+    function selectSubj(btn){
+      document.querySelectorAll('.subj-btn').forEach(b=>b.classList.remove('selected'));
+      btn.classList.add('selected');
+    }
+    document.getElementById('contactForm').addEventListener('submit', e=>{
+      e.preventDefault();
+      const fn=document.getElementById('firstName').value.trim();
+      const em=document.getElementById('email').value.trim();
+      const mg=document.getElementById('message').value.trim();
+      if(!fn||!em||!mg){
+        [document.getElementById('firstName'),document.getElementById('email'),document.getElementById('message')]
+          .forEach(el=>{if(!el.value.trim()){el.style.borderColor='#e05555';setTimeout(()=>el.style.borderColor='',2000);}}); return;
+      }
+      const btn=document.getElementById('submitBtn');
+      btn.textContent='Sending…'; btn.disabled=true;
+      setTimeout(()=>{
+        document.getElementById('formSuccess').classList.add('show');
+        e.target.reset();
+        document.querySelectorAll('.subj-btn').forEach(b=>b.classList.remove('selected'));
+        btn.innerHTML='Send Message <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>';
+        btn.disabled=false;
+      },1200);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>E-Commerce Microservices — Ponjanani M</title>
+  <meta name="description" content="7-service microservices architecture with Spring Cloud, JWT auth, Docker Compose, and MySQL." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── CSS Variables ── */
+    :root {
+      --bg: #f5f5f5; --bg-2: #ececec; --surface: #ffffff; --surface-hover: #fafafa;
+      --border: rgba(0,0,0,0.08); --text: #111111; --text-muted: #6b6b6b;
+      --text-faint: #999999; --accent: #111111; --accent-fg: #ffffff;
+      --green: #22c55e; --green-bg: rgba(34,197,94,0.12);
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-md: 0 4px 16px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.04);
+      --shadow-lg: 0 12px 40px rgba(0,0,0,0.12), 0 4px 12px rgba(0,0,0,0.06);
+      --shadow-xl: 0 24px 64px rgba(0,0,0,0.14);
+      --radius-sm: 10px; --radius-md: 16px; --radius-lg: 24px; --radius-pill: 999px;
+      --nav-blur: blur(20px); --nav-bg: rgba(255,255,255,0.75);
+      --transition: 0.25s cubic-bezier(0.4,0,0.2,1);
+    }
+    [data-theme="dark"] {
+      --bg: #0f0f0f; --bg-2: #1a1a1a; --surface: #1e1e1e; --surface-hover: #252525;
+      --border: rgba(255,255,255,0.08); --text: #f0f0f0; --text-muted: #999999;
+      --text-faint: #555555; --accent: #f0f0f0; --accent-fg: #0f0f0f;
+      --green: #4ade80; --green-bg: rgba(74,222,128,0.1);
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.3); --shadow-md: 0 4px 16px rgba(0,0,0,0.4);
+      --shadow-lg: 0 12px 40px rgba(0,0,0,0.5); --shadow-xl: 0 24px 64px rgba(0,0,0,0.6);
+      --nav-bg: rgba(15,15,15,0.8);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text);
+      line-height: 1.6; overflow-x: hidden; transition: background var(--transition), color var(--transition); }
+    img { display: block; max-width: 100%; }
+    a { text-decoration: none; color: inherit; }
+    button { font-family: inherit; cursor: pointer; border: none; background: none; }
+    input, textarea { font-family: inherit; }
+    h1, h2, h3 { font-family: 'Fraunces', serif; font-weight: 700; line-height: 1.15; letter-spacing: -0.02em; }
+    h1 { font-size: clamp(2.4rem, 5vw, 4rem); }
+    h2 { font-size: clamp(1.8rem, 3.5vw, 2.8rem); }
+    h3 { font-size: 1.15rem; font-weight: 600; }
+    p { color: var(--text-muted); font-weight: 300; font-size: 1.05rem; }
+    .container { width: 100%; max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+    section { padding: 100px 0; }
+    .reveal { opacity: 0; transform: translateY(32px);
+      transition: opacity 0.7s cubic-bezier(0.4,0,0.2,1), transform 0.7s cubic-bezier(0.4,0,0.2,1); }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: 0.1s; } .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; } .reveal-delay-4 { transition-delay: 0.4s; }
+    /* Navbar */
+    #navbar { position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+      z-index: 1000; width: calc(100% - 48px); max-width: 800px; }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between;
+      background: var(--nav-bg); backdrop-filter: var(--nav-blur); -webkit-backdrop-filter: var(--nav-blur);
+      border: 1px solid var(--border); border-radius: var(--radius-pill);
+      padding: 10px 10px 10px 22px; box-shadow: var(--shadow-md);
+      transition: background var(--transition), box-shadow var(--transition); }
+    .nav-inner.scrolled { box-shadow: var(--shadow-lg); }
+    .nav-logo { font-family: 'Fraunces', serif; font-size: 1.3rem; font-weight: 700;
+      color: var(--text); letter-spacing: -0.03em; }
+    .nav-links { display: flex; align-items: center; gap: 4px; list-style: none; }
+    .nav-links a { display: block; padding: 8px 16px; border-radius: var(--radius-pill);
+      font-size: 0.88rem; font-weight: 500; color: var(--text-muted);
+      transition: color var(--transition), background var(--transition); }
+    .nav-links a:hover { color: var(--text); background: var(--bg-2); }
+    .nav-links a.active { color: var(--text); background: var(--bg-2); }
+    .nav-right { display: flex; align-items: center; gap: 8px; }
+    .theme-toggle { width: 38px; height: 38px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--bg-2); border: 1px solid var(--border); color: var(--text-muted);
+      transition: all var(--transition); flex-shrink: 0; }
+    .theme-toggle:hover { color: var(--text); background: var(--bg); }
+    .hamburger { display: none; width: 38px; height: 38px; border-radius: 50%;
+      flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+      background: var(--bg-2); border: 1px solid var(--border); flex-shrink: 0; }
+    .hamburger span { display: block; width: 16px; height: 1.5px; background: var(--text);
+      border-radius: 2px; transition: all var(--transition); }
+    .hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+    .mobile-menu { display: none; position: fixed; inset: 0; z-index: 999; background: var(--bg);
+      flex-direction: column; align-items: center; justify-content: center; gap: 8px; }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a { font-family: 'Fraunces', serif; font-size: 2rem; font-weight: 700;
+      color: var(--text); padding: 12px 32px; border-radius: var(--radius-pill);
+      transition: background var(--transition); }
+    .mobile-menu a:hover { background: var(--bg-2); }
+    /* Blobs */
+    .blob { position: fixed; border-radius: 50%; filter: blur(80px);
+      pointer-events: none; z-index: -1; opacity: 0.35; }
+    [data-theme="light"] .blob-1 { width:400px;height:400px;background:#d4f0e4;top:-100px;right:-100px; }
+    [data-theme="light"] .blob-2 { width:300px;height:300px;background:#e8e4f5;bottom:100px;left:-80px; }
+    [data-theme="dark"]  .blob-1 { width:400px;height:400px;background:#0d2d1e;top:-100px;right:-100px; }
+    [data-theme="dark"]  .blob-2 { width:300px;height:300px;background:#1a1528;bottom:100px;left:-80px; }
+    /* Buttons */
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 14px 28px;
+      border-radius: var(--radius-pill); font-size: 0.92rem; font-weight: 500;
+      transition: all var(--transition); letter-spacing: 0.01em; }
+    .btn-primary { background: var(--accent); color: var(--accent-fg); box-shadow: var(--shadow-sm); }
+    .btn-primary:hover { transform: scale(1.04); box-shadow: var(--shadow-md); }
+    .btn-outline { background: transparent; color: var(--text); border: 1.5px solid var(--border); }
+    .btn-outline:hover { background: var(--surface); transform: scale(1.04); box-shadow: var(--shadow-sm); }
+    /* Section label */
+    .section-label { display: inline-block; font-size: 0.78rem; font-weight: 600;
+      letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 14px; }
+    .section-header { text-align: center; margin-bottom: 64px; }
+    .section-title { color: var(--text); }
+    .section-sub { margin-top: 14px; max-width: 520px; margin-left: auto; margin-right: auto; }
+    /* Chip / tag */
+    .chip { font-size: 0.8rem; font-weight: 500; padding: 5px 13px; border-radius: var(--radius-pill);
+      background: var(--bg-2); border: 1px solid var(--border); color: var(--text-muted); }
+    .tag { font-size: 0.75rem; font-weight: 500; padding: 4px 11px;
+      border-radius: var(--radius-pill); background: var(--bg);
+      border: 1px solid var(--border); color: var(--text-faint); }
+    /* Page hero (inner pages) */
+    .page-hero { padding: 150px 24px 72px; text-align: center; position: relative; overflow: hidden; }
+    .page-hero-orb { position: absolute; border-radius: 50%; pointer-events: none;
+      filter: blur(100px); opacity: 0.22; width: 500px; height: 500px;
+      background: radial-gradient(circle, #d4f0e4, transparent 70%);
+      top: -160px; left: 50%; transform: translateX(-50%); }
+    [data-theme="dark"] .page-hero-orb { background: radial-gradient(circle, #0d2d1e, transparent 70%); opacity: 0.35; }
+    .page-hero-label { display: inline-block; font-size: 0.78rem; font-weight: 600;
+      letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 16px; }
+    .page-hero h1 { animation: fadeSlideIn 0.85s 0.05s cubic-bezier(0.4,0,0.2,1) both; margin-bottom: 18px; }
+    .page-hero h1 em { font-style: italic; color: var(--text-muted); }
+    .page-hero-sub { font-size: 1.05rem; max-width: 500px; margin: 0 auto;
+      animation: fadeSlideIn 0.85s 0.15s cubic-bezier(0.4,0,0.2,1) both; }
+    @keyframes fadeSlideIn { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:translateY(0)} }
+    /* Footer */
+    footer { border-top: 1px solid var(--border); padding: 32px 0; text-align: center; }
+    footer p { font-size: 0.85rem; color: var(--text-faint); }
+    footer a { color: var(--text-muted); transition: color var(--transition); }
+    footer a:hover { color: var(--text); }
+    /* Responsive */
+    @media (max-width: 768px) {
+      section { padding: 72px 0; }
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      h1 { font-size: 2.2rem; } h2 { font-size: 1.8rem; }
+    }
+    @media (max-width: 480px) {
+      #navbar { width: calc(100% - 32px); top: 16px; }
+    }
+    /* Project hero */
+    .proj-hero { padding: 140px 24px 60px; position: relative; overflow: hidden; }
+    .proj-hero-bg { position: absolute; inset: 0; opacity: 0.28; }
+    .proj-hero-content { position: relative; z-index: 1; max-width: 820px; }
+    .proj-back { display: inline-flex; align-items: center; gap: 8px; font-size: 0.83rem;
+      color: var(--text-muted); margin-bottom: 28px; transition: color var(--transition); }
+    .proj-back:hover { color: var(--text); }
+    .proj-type-badge { display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.76rem; font-weight: 600; padding: 5px 12px; border-radius: var(--radius-pill);
+      margin-bottom: 18px; border: 1.5px solid; }
+    .proj-hero h1 { margin-bottom: 16px; }
+    .proj-hero h1 em { font-style: italic; color: var(--text-muted); }
+    .proj-hero-sub { font-size: 1.05rem; max-width: 600px; margin-bottom: 32px; }
+    .proj-meta-row { display: flex; gap: 32px; flex-wrap: wrap; padding-top: 24px; border-top: 1px solid var(--border); }
+    .proj-meta-item { display: flex; flex-direction: column; gap: 4px; }
+    .proj-meta-label { font-size: 0.7rem; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.1em; }
+    .proj-meta-val { font-size: 0.9rem; color: var(--text); font-weight: 600; }
+    /* Layout */
+    .proj-layout { display: grid; grid-template-columns: 1fr 300px; gap: 56px; align-items: start; }
+    .proj-main { display: flex; flex-direction: column; gap: 52px; }
+    .proj-section h3 { font-family: 'Fraunces', serif; font-size: 1.5rem; color: var(--text);
+      margin-bottom: 16px; font-weight: 700; }
+    .proj-section p { font-size: 0.96rem; line-height: 1.8; }
+    .proj-section p + p { margin-top: 12px; }
+    /* Feature list */
+    .feature-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+    .feature-item { display: flex; align-items: flex-start; gap: 14px; padding: 16px;
+      background: var(--bg-2); border: 1px solid var(--border); border-radius: var(--radius-sm);
+      transition: border-color var(--transition); }
+    .feature-item:hover { border-color: var(--text-faint); }
+    .feat-icon { width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0;
+      background: var(--surface); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center; color: var(--text-muted); margin-top: 1px; }
+    .feat-text-title { font-weight: 700; font-size: 0.9rem; color: var(--text); margin-bottom: 4px; }
+    .feat-text-desc { font-size: 0.84rem; color: var(--text-muted); line-height: 1.65; font-weight: 300; }
+    /* Challenge cards */
+    .challenge-grid { display: flex; flex-direction: column; gap: 14px; }
+    .challenge-card { background: var(--bg-2); border: 1px solid var(--border);
+      border-radius: var(--radius-md); padding: 20px 24px; }
+    .challenge-label { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; margin-bottom: 8px; }
+    .challenge-label.prob { color: #e05555; }
+    .challenge-label.sol { color: var(--green); }
+    .challenge-text { font-size: 0.88rem; line-height: 1.72; color: var(--text-muted); font-weight: 300; }
+    /* Sidebar */
+    .proj-sidebar { display: flex; flex-direction: column; gap: 20px; position: sticky; top: 100px; }
+    .sidebar-card { background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--shadow-sm); }
+    .sidebar-title { font-size: 0.72rem; font-weight: 700; color: var(--text-faint);
+      text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 16px; }
+    .tech-list { display: flex; flex-direction: column; gap: 10px; }
+    .tech-item { display: flex; align-items: center; gap: 10px; font-size: 0.86rem; color: var(--text-muted); }
+    .tech-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+    .sidebar-links { display: flex; flex-direction: column; gap: 10px; }
+    .sidebar-link { display: flex; align-items: center; gap: 10px; padding: 11px 14px;
+      background: var(--bg-2); border: 1px solid var(--border); border-radius: var(--radius-sm);
+      color: var(--text-muted); font-size: 0.85rem; font-weight: 500;
+      transition: all var(--transition); }
+    .sidebar-link:hover { color: var(--text); border-color: var(--text-faint); background: var(--bg); }
+    /* Proj nav */
+    .proj-nav { display: flex; justify-content: space-between; padding-top: 56px;
+      border-top: 1px solid var(--border); margin-top: 16px; }
+    .proj-nav-link { display: flex; align-items: center; gap: 8px; font-size: 0.85rem;
+      color: var(--text-muted); transition: color var(--transition); }
+    .proj-nav-link:hover { color: var(--text); }
+    /* Flow steps */
+    .flow { background: var(--bg-2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px; }
+    .flow-title { font-size: 0.72rem; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 18px; }
+    .flow-step { display: flex; align-items: flex-start; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+    .flow-step:last-child { border-bottom: none; }
+    .flow-num { width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
+      background: var(--surface); border: 1.5px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-muted); font-size: 0.72rem; font-weight: 700; margin-top: 1px; }
+    .flow-text { font-size: 0.86rem; color: var(--text-muted); line-height: 1.6; font-weight: 300; }
+    .flow-text strong { color: var(--text); font-weight: 600; }
+    /* Endpoints */
+    .endpoints { display: flex; flex-direction: column; gap: 8px; }
+    .endpoint { display: flex; align-items: center; gap: 12px; padding: 11px 16px;
+      background: var(--bg-2); border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.83rem; }
+    .method { font-size: 0.7rem; font-weight: 700; padding: 3px 8px; border-radius: 5px;
+      min-width: 44px; text-align: center; flex-shrink: 0; }
+    .method.post { background: rgba(34,197,94,0.15); color: var(--green); }
+    .method.get { background: rgba(59,130,246,0.15); color: #3b82f6; }
+    .endpoint-path { font-family: monospace; color: var(--text-muted); font-size: 0.82rem; }
+    .endpoint-desc { color: var(--text-faint); font-size: 0.78rem; margin-left: auto; }
+    /* Detection grid */
+    .detection-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .detection-card { background: var(--bg-2); border: 1px solid var(--border);
+      border-radius: var(--radius-md); padding: 22px; transition: border-color var(--transition); }
+    .detection-card:hover { border-color: var(--text-faint); }
+    .detection-icon { width: 36px; height: 36px; border-radius: 8px; background: var(--surface);
+      border: 1px solid var(--border); display: flex; align-items: center; justify-content: center;
+      color: var(--text-muted); margin-bottom: 12px; }
+    .detection-title { font-weight: 700; font-size: 0.9rem; color: var(--text); margin-bottom: 8px; }
+    .detection-desc { font-size: 0.83rem; color: var(--text-muted); line-height: 1.65; font-weight: 300; }
+    /* Pipeline */
+    .pipeline { display: flex; flex-direction: column; gap: 0; }
+    .pipeline-step { display: flex; gap: 16px; position: relative; padding-bottom: 18px; }
+    .pipeline-step:last-child { padding-bottom: 0; }
+    .pipeline-step::before { content:''; position:absolute; left:14px; top:30px; bottom:0; width:1px; background:var(--border); }
+    .pipeline-step:last-child::before { display:none; }
+    .pipeline-num { width: 30px; height: 30px; border-radius: 50%; background: var(--surface);
+      border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center;
+      color: var(--text-muted); font-size: 0.74rem; font-weight: 700; flex-shrink: 0; position: relative; z-index:1; }
+    .pipeline-content { padding-top: 4px; }
+    .pipeline-title { font-weight: 700; font-size: 0.9rem; color: var(--text); margin-bottom: 4px; }
+    .pipeline-desc { font-size: 0.84rem; color: var(--text-muted); line-height: 1.65; font-weight: 300; }
+    @media(max-width:900px){ .proj-layout{ grid-template-columns:1fr; } .proj-sidebar{ position:static; } .detection-grid{grid-template-columns:1fr;} }
+
+  </style>
+</head>
+<body>
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <nav class="mobile-menu" id="mobileMenu">
+    <a href="index.html" onclick="closeMobile()">Home</a>
+    <a href="about.html" onclick="closeMobile()">About</a>
+    <a href="projects.html" onclick="closeMobile()">Projects</a>
+    <a href="contact.html" onclick="closeMobile()">Contact</a>
+  </nav>
+  <nav id="navbar">
+    <div class="nav-inner" id="navInner">
+      <a href="index.html" class="nav-logo">
+      </a>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="projects.html" class="active">Projects</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+      <div class="nav-right">
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+          <svg id="sunIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/></svg>
+          <svg id="moonIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <button class="hamburger" id="hamburger" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="proj-hero">
+    <div class="proj-hero-bg" style="background:linear-gradient(135deg,#ffffff 0%,#dae9ff 55%,#a0c3ff 100%)"></div>
+    <div class="container">
+      <a href="projects.html" class="proj-back">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        Back to Projects
+      </a>
+      <div class="proj-hero-content">
+        <div class="proj-type-badge" style="background:#3b82f615;border-color:#3b82f640;color:#3b82f6">● Backend · Microservices · DevOps</div>
+        <h1>E-Commerce<br /><em>Microservices</em></h1>
+        <p class="proj-hero-sub">A production-grade distributed system with 7 independently deployable services, demonstrating enterprise Java architecture patterns.</p>
+        <div class="proj-meta-row">
+          <div class="proj-meta-item"><span class="proj-meta-label">Timeline</span><span class="proj-meta-val">Mar 2026 – Apr 2026</span></div>
+          <div class="proj-meta-item"><span class="proj-meta-label">Type</span><span class="proj-meta-val">Personal Project</span></div>
+          <div class="proj-meta-item"><span class="proj-meta-label">Services</span><span class="proj-meta-val">7 Microservices</span></div>
+          <div class="proj-meta-item"><span class="proj-meta-label">Status</span><span class="proj-meta-val" style="color:#22c55e">● Live Demo</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section>
+    <div class="container">
+      <div class="proj-layout">
+        <div class="proj-main">
+          
+          <div class="proj-section reveal">
+            <h3>Project Overview</h3>
+            <p>A production-grade e-commerce backend built on a microservices architecture, where each business domain — users, products, orders, inventory, payments, and notifications — is isolated into its own independently deployable service. All traffic routes through a Spring Cloud API Gateway, with Eureka handling service discovery.</p>
+            <p>The goal was to go beyond tutorials and build something that reflects genuine enterprise patterns: fault tolerance, distributed security, database isolation, and containerised deployment. Every design decision was intentional and production-minded.</p>
+          </div>
+          <div class="proj-section reveal">
+            <h3>Key Features</h3>
+            <ul class="feature-list">
+              <li class="feature-item">
+                <div class="feat-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+                <div><div class="feat-text-title">Eureka Service Discovery + API Gateway</div><div class="feat-text-desc">All 7 services register with Eureka at startup. Spring Cloud Gateway handles intelligent routing, load balancing, and rate limiting — the single entry point for all client traffic.</div></div>
+              </li>
+              <li class="feature-item">
+                <div class="feat-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+                <div><div class="feat-text-title">Stateless JWT Authentication</div><div class="feat-text-desc">Spring Security with BCrypt issues JWTs validated at the gateway level. No session state — truly stateless and horizontally scalable.</div></div>
+              </li>
+              <li class="feature-item">
+                <div class="feat-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+                <div><div class="feat-text-title">Resilience4j Circuit Breakers</div><div class="feat-text-desc">OpenFeign clients between services are wrapped with circuit breakers and retry policies. If the Inventory Service goes down, the Order Service degrades gracefully rather than cascading failures.</div></div>
+              </li>
+              <li class="feature-item">
+                <div class="feat-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></div>
+                <div><div class="feat-text-title">Database-per-Service Isolation</div><div class="feat-text-desc">Each microservice owns its own MySQL schema — zero cross-service database coupling. Pessimistic locking in Inventory Service handles concurrent stock updates safely.</div></div>
+              </li>
+              <li class="feature-item">
+                <div class="feat-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+                <div><div class="feat-text-title">Multi-Stage Docker Compose Orchestration</div><div class="feat-text-desc">Multi-stage Dockerfiles minimise image size. A single <code style="background:var(--bg-2);padding:1px 5px;border-radius:4px;font-size:0.8rem">docker compose up</code> spins up all 7 services with correct networking and health checks.</div></div>
+              </li>
+            </ul>
+          </div>
+          <div class="proj-section reveal">
+            <h3>Challenges &amp; Solutions</h3>
+            <div class="challenge-grid">
+              <div class="challenge-card"><div class="challenge-label prob">⚠ Challenge</div><div class="challenge-text">Concurrent stock updates from multiple Order Service instances caused race conditions — two orders could both see stock = 1 and both succeed, resulting in overselling.</div></div>
+              <div class="challenge-card"><div class="challenge-label sol">✓ Solution</div><div class="challenge-text">Implemented pessimistic locking (SELECT FOR UPDATE) in the Inventory Service so only one transaction can read-and-decrement stock at a time, preventing overselling under concurrent load.</div></div>
+              <div class="challenge-card"><div class="challenge-label prob">⚠ Challenge</div><div class="challenge-text">If one service was down, all dependent services would hang indefinitely, causing cascading timeouts across the system.</div></div>
+              <div class="challenge-card"><div class="challenge-label sol">✓ Solution</div><div class="challenge-text">Configured Resilience4j circuit breakers with fallback methods and exponential retry backoff. Services now fail fast and return graceful error responses when dependencies are unavailable.</div></div>
+            </div>
+          </div>
+          <div class="proj-nav">
+            <a href="projects.html" class="proj-nav-link">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+              All Projects
+            </a>
+            <a href="project-resume.html" class="proj-nav-link">
+              Resume Analyzer
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
+          </div>
+        </div>
+        <aside class="proj-sidebar">
+          <div class="sidebar-card reveal">
+            <div class="sidebar-title">Tech Stack</div>
+            <div class="tech-list">
+              <div class="tech-item"><div class="tech-dot"></div>Java 17</div>
+              <div class="tech-item"><div class="tech-dot"></div>Spring Boot 3</div>
+              <div class="tech-item"><div class="tech-dot"></div>Spring Cloud Gateway</div>
+              <div class="tech-item"><div class="tech-dot"></div>Eureka Discovery</div>
+              <div class="tech-item"><div class="tech-dot"></div>Spring Security</div>
+              <div class="tech-item"><div class="tech-dot"></div>MySQL 8</div>
+              <div class="tech-item"><div class="tech-dot"></div>Maven</div>
+</div>
+          </div>
+          <div class="sidebar-card reveal reveal-delay-1">
+            <div class="sidebar-title">Links</div>
+            <div class="sidebar-links">
+              <a href="#" class="sidebar-link"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg> View Source Code</a>
+              <a href="#" class="sidebar-link"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg> Live Demo</a></div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <p>Designed &amp; built by <a href="index.html">Ponjanani M</a> &middot; <span id="year"></span> &middot; Chennai, Tamil Nadu ✦</p>
+    </div>
+  </footer>
+  <script>
+    // Year
+    document.getElementById('year').textContent = new Date().getFullYear();
+    // Theme
+    const html=document.documentElement,toggle=document.getElementById('themeToggle'),
+      sunIcon=document.getElementById('sunIcon'),moonIcon=document.getElementById('moonIcon');
+    const saved=localStorage.getItem('theme'); if(saved) html.setAttribute('data-theme',saved);
+    function syncIcons(){const d=html.getAttribute('data-theme')==='dark';
+      sunIcon.style.display=d?'none':'';moonIcon.style.display=d?'':'none';}
+    syncIcons();
+    toggle.addEventListener('click',()=>{
+      const next=html.getAttribute('data-theme')==='dark'?'light':'dark';
+      html.setAttribute('data-theme',next);localStorage.setItem('theme',next);syncIcons();});
+    // Hamburger
+    const ham=document.getElementById('hamburger'),mob=document.getElementById('mobileMenu');
+    ham.addEventListener('click',()=>{ham.classList.toggle('open');mob.classList.toggle('open');
+      document.body.style.overflow=mob.classList.contains('open')?'hidden':'';});
+    function closeMobile(){ham.classList.remove('open');mob.classList.remove('open');document.body.style.overflow='';}
+    // Scroll
+    const navInner=document.getElementById('navInner');
+    window.addEventListener('scroll',()=>{navInner.classList.toggle('scrolled',window.scrollY>40);},{passive:true});
+    // Reveal
+    const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{
+      if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12});
+    document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+  </script>
+</body>
+</html>
